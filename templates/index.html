@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StyleAI+ | Your Personal Fashion Stylist</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="sparkle">✨</span>
+                <h1>StyleAI+</h1>
+            </div>
+            <div class="nav-links">
+                <a href="#home">Home</a>
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#contact">Contact</a>
+                <a href="#try-it" class="nav-btn-try">Try It Now ✨</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero-section" id="home">
+            <h2>Your AI-Powered Fashion Companion</h2>
+            <p>Discover personalized style recommendations tailored just for you</p>
+        </div>
+
+        <!-- Features Section -->
+        <section id="features" class="info-section">
+            <h2 class="section-title">✨ Amazing Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Skin Tone Analysis</h3>
+                    <p>Advanced AI analyzes your skin tone and undertone to suggest perfect colors</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">👗</div>
+                    <h3>Personalized Outfits</h3>
+                    <p>Get outfit recommendations based on occasion, weather, and your style</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💎</div>
+                    <h3>Accessory Suggestions</h3>
+                    <p>Complete your look with perfectly matched accessories and jewelry</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🛍️</div>
+                    <h3>Smart Shopping</h3>
+                    <p>Direct links to Amazon, Flipkart, and Myntra for easy shopping</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💇</div>
+                    <h3>Hairstyle Tips</h3>
+                    <p>Get hairstyle recommendations that complement your face shape</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌍</div>
+                    <h3>Multilingual</h3>
+                    <p>Available in English, Hindi, and Telugu for your convenience</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section id="how-it-works" class="info-section">
+            <h2 class="section-title">🚀 How It Works</h2>
+            <div class="steps-container">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3>Upload Your Photo</h3>
+                    <p>Take a selfie or upload a clear photo of your face</p>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3>AI Analysis</h3>
+                    <p>Our AI analyzes your skin tone, undertone, and features</p>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3>Get Recommendations</h3>
+                    <p>Receive personalized color palettes, outfits, and shopping links</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="info-section">
+            <h2 class="section-title">📧 Get In Touch</h2>
+            <div class="contact-card">
+                <p>Have questions or feedback? We'd love to hear from you!</p>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <span class="contact-icon">📧</span>
+                        <span>support@styleai.com</span>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-icon">🌐</span>
+                        <span>www.styleai.com</span>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-icon">📱</span>
+                        <span>Follow us on social media</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Language & Theme Selector -->
+        <div class="controls-bar">
+            <!-- Gender Selection -->
+            <div class="gender-selector">
+                <label>I am:</label>
+                <button class="gender-btn active" data-gender="female">
+                    <span class="icon">👩</span>
+                    <span>Female</span>
+                </button>
+                <button class="gender-btn" data-gender="male">
+                    <span class="icon">👨</span>
+                    <span>Male</span>
+                </button>
+                <button class="gender-btn" data-gender="unisex">
+                    <span class="icon">🌟</span>
+                    <span>Other</span>
+                </button>
+            </div>
+            
+            <div class="language-selector">
+                <button class="lang-btn active" data-lang="en">English</button>
+                <button class="lang-btn" data-lang="hi">हिंदी</button>
+                <button class="lang-btn" data-lang="te">తెలుగు</button>
+            </div>
+            
+            <div class="theme-selector">
+                <label>Theme:</label>
+                <button class="theme-btn active" data-theme="pink">💖 Pink</button>
+                <button class="theme-btn" data-theme="purple">💜 Purple</button>
+                <button class="theme-btn" data-theme="blue">💙 Blue</button>
+                <button class="theme-btn" data-theme="green">💚 Green</button>
+                <button class="theme-btn" data-theme="orange">🧡 Orange</button>
+            </div>
+        </div>
+
+        <!-- Upload Section -->
+        <section id="upload-section" class="section active">
+            <div id="try-it"></div>
+            <div class="upload-section-wrapper">
+                <div class="upload-card">
+                    <div class="upload-icon">📸</div>
+                    <h2 data-translate="upload_title">Upload Your Photo</h2>
+                    <p data-translate="upload_desc">Let's discover your perfect style!</p>
+                
+                <div class="upload-area" id="upload-area">
+                    <input type="file" id="file-input" accept="image/*" hidden>
+                    <div class="upload-content">
+                        <span class="upload-emoji" id="upload-emoji">📸</span>
+                        <p data-translate="drag_drop">Drag & drop your photo here</p>
+                        <div class="upload-buttons">
+                            <button class="btn-primary" id="browse-btn" data-translate="browse">📁 Browse Files</button>
+                            <button class="btn-primary" id="camera-btn" data-translate="camera">📸 Use Camera</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Camera Modal -->
+                <div id="camera-modal" class="modal">
+                    <div class="modal-content">
+                        <span class="close-modal">&times;</span>
+                        <h3>Take a Photo</h3>
+                        <video id="camera-video" autoplay></video>
+                        <canvas id="camera-canvas" style="display:none;"></canvas>
+                        <div class="camera-controls">
+                            <button class="btn-primary" id="capture-btn">📸 Capture</button>
+                            <button class="btn-secondary" id="cancel-camera-btn">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="preview-container" id="preview-container" style="display:none;">
+                    <img id="preview-image" alt="Preview">
+                    <button class="btn-secondary" id="change-photo" data-translate="change_photo">Change Photo</button>
+                </div>
+            </div>
+
+            <!-- Preferences -->
+            <div class="preferences-card">
+                <h3 data-translate="tell_us">Tell us more about you</h3>
+                
+                <div class="input-group">
+                    <label data-translate="vibe">What's your vibe?</label>
+                    <select id="vibe-select" class="select-input">
+                        <option value="casual">Casual & Comfy</option>
+                        <option value="professional">Professional</option>
+                        <option value="party">Party Ready</option>
+                        <option value="streetwear">Streetwear</option>
+                        <option value="minimal">Minimal Chic</option>
+                        <option value="festive">Festive</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label data-translate="occasion">Occasion</label>
+                    <select id="occasion-select" class="select-input">
+                        <option value="daily">Daily Wear</option>
+                        <option value="work">Work/Office</option>
+                        <option value="party">Party/Event</option>
+                        <option value="wedding">Wedding Ceremony</option>
+                        <option value="date">Date Night</option>
+                        <option value="brunch">Brunch/Lunch</option>
+                        <option value="dinner">Dinner Out</option>
+                        <option value="gym">Gym/Workout</option>
+                        <option value="travel">Travel/Vacation</option>
+                        <option value="festival">Festival/Celebration</option>
+                        <option value="interview">Job Interview</option>
+                        <option value="college">College/University</option>
+                        <option value="shopping">Shopping Trip</option>
+                        <option value="beach">Beach/Pool</option>
+                        <option value="concert">Concert/Show</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label data-translate="budget">Budget Range</label>
+                    <select id="budget-select" class="select-input">
+                        <option value="low">Budget Friendly (₹500-2000)</option>
+                        <option value="medium">Moderate (₹2000-5000)</option>
+                        <option value="high">Premium (₹5000+)</option>
+                    </select>
+                </div>
+
+                <button class="btn-primary btn-large" id="analyze-btn" data-translate="analyze" disabled>
+                    Analyze My Style ✨
+                </button>
+            </div>
+            </div>
+        </section>
+
+        <!-- Loading Section -->
+        <section id="loading-section" class="section">
+            <div class="loading-card">
+                <div class="spinner"></div>
+                <h2 data-translate="analyzing">Analyzing your beauty...</h2>
+                <p class="loading-text" data-translate="wait">Creating your personalized style guide</p>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section id="results-section" class="section">
+            <div class="results-header">
+                <h2 data-translate="your_palette">Your Perfect Palette</h2>
+                <div id="skin-tone-result"></div>
+            </div>
+
+            <!-- Color Palette -->
+            <div class="color-palette-card">
+                <h3 data-translate="colors">Colors Made for You</h3>
+                <div id="color-palette" class="color-grid"></div>
+            </div>
+
+            <!-- Outfits & Accessories Grid -->
+            <div class="results-grid">
+                <!-- Outfits -->
+                <div class="outfits-card">
+                    <h3 data-translate="outfits">Outfit Inspirations</h3>
+                    <div id="outfits-grid" class="outfits-grid"></div>
+                </div>
+
+                <!-- Accessories -->
+                <div class="accessories-card">
+                    <h3 data-translate="accessories">Complete the Look</h3>
+                    <div id="accessories-list" class="accessories-list"></div>
+                </div>
+            </div>
+
+            <!-- Hairstyles -->
+            <div class="hairstyle-card">
+                <h3 data-translate="hairstyles">Hairstyle Suggestions</h3>
+                <div id="hairstyle-list" class="hairstyle-list"></div>
+            </div>
+
+            <!-- Explanation -->
+            <div class="explanation-card">
+                <h3 data-translate="why">Why This Works for You</h3>
+                <p id="explanation-text"></p>
+            </div>
+
+            <!-- Shopping Section -->
+            <div class="shopping-card">
+                <h3 data-translate="shop">Shop Your Style</h3>
+                
+                <!-- Amazon Section -->
+                <div class="platform-section">
+                    <div class="platform-header">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon" class="platform-logo">
+                        <h4>Amazon India</h4>
+                    </div>
+                    <div id="amazon-grid" class="shopping-grid"></div>
+                </div>
+                
+                <!-- Flipkart Section -->
+                <div class="platform-section">
+                    <div class="platform-header">
+                        <img src="https://upload.wikimedia.org/wikipedia/en/7/7a/Flipkart_logo.svg" alt="Flipkart" class="platform-logo">
+                        <h4>Flipkart</h4>
+                    </div>
+                    <div id="flipkart-grid" class="shopping-grid"></div>
+                </div>
+                
+                <!-- Myntra Section -->
+                <div class="platform-section">
+                    <div class="platform-header">
+                        <img src="https://constant.myntassets.com/web/assets/img/icon.png" alt="Myntra" class="platform-logo">
+                        <h4>Myntra</h4>
+                    </div>
+                    <div id="myntra-grid" class="shopping-grid"></div>
+                </div>
+            </div>
+
+            <!-- Feedback -->
+            <div class="feedback-card">
+                <h3 data-translate="feedback_title">Love these recommendations?</h3>
+                <div class="feedback-buttons">
+                    <button class="btn-feedback btn-love" data-feedback="true">
+                        💖 Love it!
+                    </button>
+                    <button class="btn-feedback btn-meh" data-feedback="false">
+                        🤔 Not quite
+                    </button>
+                </div>
+            </div>
+
+            <button class="btn-secondary btn-large" id="try-again-btn" data-translate="try_again">
+                Try Another Look
+            </button>
+        </section>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
