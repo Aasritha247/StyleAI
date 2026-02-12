@@ -12,9 +12,10 @@ class ShoppingAPI:
             'myntra': 'https://www.myntra.com'
         }
     
-    def search_products(self, query, occasion='casual', budget='medium', limit=4, platform='all'):
+    def search_products(self, query, occasion='casual', budget='medium', limit=4, platform='all', skin_tone='Medium'):
         """
         Search for fashion products with accurate direct links
+        Personalized based on skin tone
         """
         
         # Budget-based price filters
@@ -26,26 +27,36 @@ class ShoppingAPI:
         
         min_price, max_price = price_ranges.get(budget, (2000, 5000))
         
-        # Occasion-specific search queries with better keywords
-        occasion_queries = {
-            'wedding': ['wedding lehenga women', 'bridal saree', 'party gown', 'ethnic wear women'],
-            'party': ['party dress women', 'cocktail dress', 'evening gown', 'party wear women'],
-            'work': ['formal shirt women', 'blazer women', 'office wear women', 'formal trousers women'],
-            'gym': ['sports bra', 'gym leggings women', 'workout top women', 'activewear women'],
-            'beach': ['swimsuit women', 'beach dress', 'bikini', 'resort wear women'],
-            'date': ['date dress women', 'casual dress women', 'midi dress', 'jumpsuit women'],
-            'festival': ['festive wear women', 'ethnic kurta women', 'traditional dress', 'indo western women'],
-            'daily': ['casual top women', 'jeans women', 'kurti', 'casual dress women'],
-            'college': ['casual wear women', 'denim jacket women', 'crop top', 'sneakers women'],
-            'interview': ['formal blazer women', 'formal shirt women', 'formal pants women', 'professional wear women'],
-            'brunch': ['brunch dress women', 'casual top women', 'skirt women', 'summer dress women'],
-            'dinner': ['dinner dress women', 'elegant top women', 'formal dress women', 'evening wear women'],
-            'travel': ['travel wear women', 'comfortable dress women', 'casual outfit women', 'travel pants women'],
-            'shopping': ['shopping outfit women', 'casual wear women', 'comfortable dress women', 'everyday wear women'],
-            'concert': ['concert outfit women', 'trendy top women', 'stylish dress women', 'party wear women'],
+        # Skin tone specific color modifiers
+        color_modifiers = {
+            'Fair': ['pastel', 'light', 'soft', 'baby'],
+            'Medium': ['vibrant', 'bright', 'colorful', 'rich'],
+            'Olive': ['earthy', 'warm', 'olive', 'bronze'],
+            'Deep': ['bold', 'jewel tone', 'bright', 'vivid']
         }
         
-        search_terms = occasion_queries.get(occasion, ['women fashion', 'casual wear women'])
+        color_mod = color_modifiers.get(skin_tone, [''])[0]
+        
+        # Occasion-specific search queries with skin tone modifiers
+        occasion_queries = {
+            'wedding': [f'{color_mod} wedding lehenga women', f'{color_mod} bridal saree', f'{color_mod} party gown', f'{color_mod} ethnic wear women'],
+            'party': [f'{color_mod} party dress women', f'{color_mod} cocktail dress', f'{color_mod} evening gown', f'{color_mod} party wear women'],
+            'work': [f'formal shirt women', f'blazer women', f'office wear women', f'formal trousers women'],
+            'gym': [f'sports bra', f'gym leggings women', f'workout top women', f'activewear women'],
+            'beach': [f'{color_mod} swimsuit women', f'{color_mod} beach dress', f'bikini', f'{color_mod} resort wear women'],
+            'date': [f'{color_mod} date dress women', f'{color_mod} casual dress women', f'{color_mod} midi dress', f'jumpsuit women'],
+            'festival': [f'{color_mod} festive wear women', f'{color_mod} ethnic kurta women', f'{color_mod} traditional dress', f'{color_mod} indo western women'],
+            'daily': [f'{color_mod} casual top women', f'jeans women', f'{color_mod} kurti', f'{color_mod} casual dress women'],
+            'college': [f'casual wear women', f'denim jacket women', f'crop top', f'sneakers women'],
+            'interview': [f'formal blazer women', f'formal shirt women', f'formal pants women', f'professional wear women'],
+            'brunch': [f'{color_mod} brunch dress women', f'{color_mod} casual top women', f'skirt women', f'{color_mod} summer dress women'],
+            'dinner': [f'{color_mod} dinner dress women', f'{color_mod} elegant top women', f'{color_mod} formal dress women', f'{color_mod} evening wear women'],
+            'travel': [f'travel wear women', f'comfortable dress women', f'casual outfit women', f'travel pants women'],
+            'shopping': [f'shopping outfit women', f'casual wear women', f'comfortable dress women', f'everyday wear women'],
+            'concert': [f'{color_mod} concert outfit women', f'{color_mod} trendy top women', f'{color_mod} stylish dress women', f'{color_mod} party wear women'],
+        }
+        
+        search_terms = occasion_queries.get(occasion, [f'{color_mod} women fashion', f'{color_mod} casual wear women'])
         
         # Generate product recommendations
         products = []

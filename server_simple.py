@@ -45,12 +45,16 @@ def analyze_skin():
         data = request.json
         filepath = data.get('filepath')
         
-        if not filepath or not os.path.exists(filepath):
-            return jsonify({'error': 'Invalid file path'}), 400
+        print(f"Received filepath: {filepath}")
+        
+        if not filepath:
+            return jsonify({'error': 'No file path provided'}), 400
+            
+        if not os.path.exists(filepath):
+            return jsonify({'error': f'File not found: {filepath}'}), 400
         
         # Simple image-based analysis using PIL
         from PIL import Image
-        import hashlib
         
         # Open image
         img = Image.open(filepath)
@@ -100,8 +104,9 @@ def analyze_skin():
         # Delete image after analysis
         try:
             os.remove(filepath)
-        except:
-            pass
+            print(f"Deleted file: {filepath}")
+        except Exception as e:
+            print(f"Could not delete file: {e}")
         
         print(f"Analysis result: {skin_tone} skin with {undertone} undertone")
         
@@ -115,17 +120,25 @@ def analyze_skin():
         
     except Exception as e:
         print(f"Analysis error: {e}")
+        import traceback
+        traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
 @app.route('/recommend', methods=['POST'])
 def get_recommendations():
     print("Recommend endpoint called")
-    data = request.json
-    occasion = data.get('occasion', 'daily')
-    budget = data.get('budget', 'medium')
-    skin_tone = data.get('skin_tone', 'Medium')
-    undertone = data.get('undertone', 'warm')
-    vibe = data.get('vibe', 'casual')
+    try:
+        data = request.json
+        occasion = data.get('occasion', 'daily')
+        budget = data.get('budget', 'medium')
+        skin_tone = data.get('skin_tone', 'Medium')
+        undertone = data.get('undertone', 'warm')
+        vibe = data.get('vibe', 'casual')
+        
+        print(f"Request data: skin_tone={skin_tone}, undertone={undertone}, occasion={occasion}, budget={budget}")
+    except Exception as e:
+        print(f"Error parsing request: {e}")
+        return jsonify({'error': 'Invalid request data', 'details': str(e)}), 400
     
     # Personalized color palettes based on skin tone and undertone
     color_palettes = {
@@ -305,73 +318,126 @@ def get_recommendations():
     hairstyles = hairstyles_by_occasion.get(occasion, {}).get(skin_tone,
         ['Soft Waves', 'Low Bun'])
     
-    # Occasion-specific recommendations
-    occasion_outfits = {
-        'wedding': [
-            {'name': 'Traditional Elegance', 'items': ['Silk Saree', 'Blouse', 'Jewelry Set'], 'colors': ['#D4AF37', '#8B0000', '#FFD700']},
-            {'name': 'Indo-Western Fusion', 'items': ['Lehenga', 'Crop Top', 'Dupatta'], 'colors': ['#FF1493', '#FFD700', '#FFF']},
+    # Personalized outfits based on skin tone and undertone
+    outfit_recommendations = {
+        'Fair_warm': [
+            {'name': 'Peachy Elegance', 'items': ['Peach Blouse', 'Beige Trousers', 'Gold Accessories'], 'colors': ['#FFDAB9', '#F5DEB3', '#FFD700']},
+            {'name': 'Coral Chic', 'items': ['Coral Dress', 'Nude Heels', 'Gold Jewelry'], 'colors': ['#FF7F50', '#F5DEB3', '#FFD700']},
         ],
-        'party': [
-            {'name': 'Glamorous Night', 'items': ['Sequin Dress', 'Heels', 'Clutch'], 'colors': ['#000000', '#FFD700', '#C0C0C0']},
-            {'name': 'Chic Party Look', 'items': ['Jumpsuit', 'Statement Earrings', 'Heels'], 'colors': ['#8B008B', '#FF69B4', '#000']},
+        'Fair_cool': [
+            {'name': 'Lavender Dream', 'items': ['Lavender Top', 'White Pants', 'Silver Jewelry'], 'colors': ['#E6E6FA', '#FFFFFF', '#C0C0C0']},
+            {'name': 'Navy Sophistication', 'items': ['Navy Blazer', 'Pink Shirt', 'Silver Accessories'], 'colors': ['#000080', '#FFB6C1', '#C0C0C0']},
         ],
-        'work': [
-            {'name': 'Professional Chic', 'items': ['Blazer', 'Trousers', 'Pumps'], 'colors': ['#2C3E50', '#FFFFFF', '#000000']},
-            {'name': 'Smart Casual', 'items': ['Shirt', 'Pencil Skirt', 'Loafers'], 'colors': ['#4A90E2', '#2C3E50', '#8B4513']},
+        'Fair_neutral': [
+            {'name': 'Soft Pink Charm', 'items': ['Pink Dress', 'Beige Cardigan', 'Rose Gold Jewelry'], 'colors': ['#FFB6C1', '#F5DEB3', '#B76E79']},
+            {'name': 'Sky Blue Fresh', 'items': ['Sky Blue Top', 'White Skirt', 'Silver Accessories'], 'colors': ['#87CEEB', '#FFFFFF', '#C0C0C0']},
         ],
-        'gym': [
-            {'name': 'Workout Ready', 'items': ['Sports Bra', 'Leggings', 'Sneakers'], 'colors': ['#FF6B6B', '#000000', '#FFFFFF']},
-            {'name': 'Active Wear', 'items': ['Tank Top', 'Shorts', 'Running Shoes'], 'colors': ['#4ECDC4', '#2C3E50', '#95E1D3']},
+        'Medium_warm': [
+            {'name': 'Terracotta Sunset', 'items': ['Terracotta Dress', 'Brown Belt', 'Gold Jewelry'], 'colors': ['#E2725B', '#8B4513', '#FFD700']},
+            {'name': 'Olive Elegance', 'items': ['Olive Green Top', 'Mustard Pants', 'Bronze Accessories'], 'colors': ['#808000', '#FFDB58', '#CD7F32']},
         ],
-        'beach': [
-            {'name': 'Beach Vibes', 'items': ['Swimsuit', 'Cover-up', 'Sandals'], 'colors': ['#FF6B9D', '#FFFFFF', '#FFD93D']},
-            {'name': 'Tropical Style', 'items': ['Bikini', 'Sarong', 'Sun Hat'], 'colors': ['#06D6A0', '#FFE66D', '#FFFFFF']},
+        'Medium_cool': [
+            {'name': 'Teal Sophistication', 'items': ['Teal Dress', 'Silver Heels', 'Cool Pink Scarf'], 'colors': ['#008080', '#C0C0C0', '#FF69B4']},
+            {'name': 'Magenta Magic', 'items': ['Magenta Top', 'Black Pants', 'Silver Jewelry'], 'colors': ['#FF00FF', '#000000', '#C0C0C0']},
         ],
+        'Medium_neutral': [
+            {'name': 'Rose Gold Glow', 'items': ['Rose Gold Dress', 'Nude Heels', 'Delicate Jewelry'], 'colors': ['#B76E79', '#F5DEB3', '#FFD700']},
+            {'name': 'Sage Serenity', 'items': ['Sage Green Top', 'Beige Pants', 'Gold Accessories'], 'colors': ['#9DC183', '#F5DEB3', '#FFD700']},
+        ],
+        'Olive_warm': [
+            {'name': 'Army Chic', 'items': ['Army Green Jacket', 'Camel Pants', 'Bronze Jewelry'], 'colors': ['#4B5320', '#C19A6B', '#CD7F32']},
+            {'name': 'Bronze Beauty', 'items': ['Bronze Dress', 'Brown Accessories', 'Gold Jewelry'], 'colors': ['#CD7F32', '#8B4513', '#FFD700']},
+        ],
+        'Olive_cool': [
+            {'name': 'Forest Mystique', 'items': ['Forest Green Dress', 'Black Heels', 'Silver Jewelry'], 'colors': ['#228B22', '#000000', '#C0C0C0']},
+            {'name': 'Burgundy Elegance', 'items': ['Burgundy Top', 'Black Pants', 'Gold Accessories'], 'colors': ['#800020', '#000000', '#FFD700']},
+        ],
+        'Olive_neutral': [
+            {'name': 'Khaki Comfort', 'items': ['Khaki Dress', 'Brown Belt', 'Gold Jewelry'], 'colors': ['#C3B091', '#8B4513', '#FFD700']},
+            {'name': 'Moss Green Fresh', 'items': ['Moss Green Top', 'Beige Pants', 'Bronze Accessories'], 'colors': ['#8A9A5B', '#F5DEB3', '#CD7F32']},
+        ],
+        'Deep_warm': [
+            {'name': 'Golden Goddess', 'items': ['Gold Dress', 'Copper Accessories', 'Amber Jewelry'], 'colors': ['#FFD700', '#B87333', '#FFBF00']},
+            {'name': 'Crimson Queen', 'items': ['Crimson Dress', 'Gold Heels', 'Bright Accessories'], 'colors': ['#DC143C', '#FFD700', '#FF8C00']},
+        ],
+        'Deep_cool': [
+            {'name': 'Electric Diva', 'items': ['Electric Blue Dress', 'Silver Heels', 'Bold Jewelry'], 'colors': ['#7DF9FF', '#C0C0C0', '#FF69B4']},
+            {'name': 'Violet Royalty', 'items': ['Violet Gown', 'Silver Accessories', 'Statement Jewelry'], 'colors': ['#8F00FF', '#C0C0C0', '#FF00FF']},
+        ],
+        'Deep_neutral': [
+            {'name': 'Ruby Radiance', 'items': ['Ruby Red Dress', 'Gold Jewelry', 'Black Heels'], 'colors': ['#E0115F', '#FFD700', '#000000']},
+            {'name': 'Emerald Elegance', 'items': ['Emerald Dress', 'Gold Accessories', 'Nude Heels'], 'colors': ['#50C878', '#FFD700', '#F5DEB3']},
+        ]
     }
     
-    outfits = occasion_outfits.get(occasion, [
+    # Get personalized outfits or use default fallback
+    palette_key = f"{skin_tone}_{undertone}"
+    outfits = outfit_recommendations.get(palette_key, [
         {'name': 'Casual Look', 'items': ['Floral Top', 'Denim Jeans', 'White Sneakers'], 'colors': ['#FF6B6B', '#4D96FF', '#FFFFFF']},
         {'name': 'Everyday Chic', 'items': ['T-shirt', 'Palazzo', 'Flats'], 'colors': ['#FFD93D', '#2C3E50', '#8B4513']},
     ])
     
-    # Get shopping products for each platform separately
-    amazon_products = shopping_api.search_products(
-        query='fashion',
-        occasion=occasion,
-        budget=budget,
-        limit=4,
-        platform='amazon'
-    )
+    # Get shopping products with skin-tone specific keywords
+    search_modifier = ''
+    if skin_tone == 'Fair':
+        search_modifier = 'light pastel'
+    elif skin_tone == 'Medium':
+        search_modifier = 'vibrant colorful'
+    elif skin_tone == 'Olive':
+        search_modifier = 'earthy warm'
+    elif skin_tone == 'Deep':
+        search_modifier = 'bold bright'
     
-    flipkart_products = shopping_api.search_products(
-        query='fashion',
-        occasion=occasion,
-        budget=budget,
-        limit=4,
-        platform='flipkart'
-    )
+    # Get shopping products for each platform separately with skin-tone specific searches
+    try:
+        amazon_products = shopping_api.search_products(
+            query='fashion',
+            occasion=occasion,
+            budget=budget,
+            limit=4,
+            platform='amazon',
+            skin_tone=skin_tone
+        )
+        
+        flipkart_products = shopping_api.search_products(
+            query='fashion',
+            occasion=occasion,
+            budget=budget,
+            limit=4,
+            platform='flipkart',
+            skin_tone=skin_tone
+        )
+        
+        myntra_products = shopping_api.search_products(
+            query='fashion',
+            occasion=occasion,
+            budget=budget,
+            limit=4,
+            platform='myntra',
+            skin_tone=skin_tone
+        )
+        
+        print(f"Shopping products fetched successfully")
+        
+        return jsonify({
+            'success': True,
+            'color_palette': color_palette,
+            'outfits': outfits,
+            'accessories': accessories,
+            'hairstyle': hairstyles,
+            'shopping': {
+                'amazon': amazon_products,
+                'flipkart': flipkart_products,
+                'myntra': myntra_products
+            },
+            'explanation': f'These {", ".join([c["name"] for c in color_palette[:3]])} colors are specially chosen for your {skin_tone.lower()} skin tone with {undertone} undertones. Perfect for {occasion} occasions with a {vibe} vibe!'
+        })
     
-    myntra_products = shopping_api.search_products(
-        query='fashion',
-        occasion=occasion,
-        budget=budget,
-        limit=4,
-        platform='myntra'
-    )
-    
-    return jsonify({
-        'success': True,
-        'color_palette': color_palette,
-        'outfits': outfits,
-        'accessories': accessories,
-        'hairstyle': hairstyles,
-        'shopping': {
-            'amazon': amazon_products,
-            'flipkart': flipkart_products,
-            'myntra': myntra_products
-        },
-        'explanation': f'These {", ".join([c["name"] for c in color_palette[:3]])} colors are specially chosen for your {skin_tone.lower()} skin tone with {undertone} undertones. Perfect for {occasion} occasions with a {vibe} vibe!'
-    })
+    except Exception as e:
+        print(f"Error in recommendation generation: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': 'Failed to generate recommendations', 'details': str(e)}), 500
 
 @app.route('/feedback', methods=['POST'])
 def submit_feedback():

@@ -279,13 +279,24 @@ async function analyzeImage() {
             })
         });
 
+        // Check if response is JSON
+        const contentType = recommendResponse.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const errorText = await recommendResponse.text();
+            console.error('Server returned non-JSON response:', errorText);
+            alert('Server error: Expected JSON response but got HTML. Check console for details.');
+            showSection('upload-section');
+            return;
+        }
+
         const recommendations = await recommendResponse.json();
 
         if (recommendations.success) {
             displayResults(analysisResult, recommendations);
             showSection('results-section');
         } else {
-            alert('Recommendation failed');
+            alert('Recommendation failed: ' + (recommendations.error || 'Unknown error'));
+            console.error('Recommendation error:', recommendations);
             showSection('upload-section');
         }
 
