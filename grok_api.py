@@ -16,6 +16,113 @@ class GrokAPI:
         if not self.api_key:
             print("Warning: XAI_API_KEY not found in environment variables")
     
+    def generate_complete_recommendations(self, skin_tone, undertone, gender, occasion, vibe, budget):
+        """
+        Generate complete structured fashion recommendations using Grok
+        Returns: colors, outfits, accessories, hairstyles, explanation
+        """
+        
+        prompt = f"""You are an expert fashion stylist. Generate personalized recommendations for:
+
+Skin Tone: {skin_tone}
+Undertone: {undertone}
+Gender: {gender}
+Occasion: {occasion}
+Style Vibe: {vibe}
+Budget: {budget}
+
+Provide a JSON response with this EXACT structure:
+{{
+  "color_palette": [
+    {{"name": "Color Name", "hex": "#HEXCODE"}},
+    {{"name": "Color Name", "hex": "#HEXCODE"}},
+    {{"name": "Color Name", "hex": "#HEXCODE"}},
+    {{"name": "Color Name", "hex": "#HEXCODE"}},
+    {{"name": "Color Name", "hex": "#HEXCODE"}}
+  ],
+  "outfits": [
+    {{
+      "name": "Outfit Name",
+      "items": ["Item 1", "Item 2", "Item 3"],
+      "colors": ["#HEX1", "#HEX2", "#HEX3"]
+    }},
+    {{
+      "name": "Outfit Name",
+      "items": ["Item 1", "Item 2", "Item 3"],
+      "colors": ["#HEX1", "#HEX2", "#HEX3"]
+    }}
+  ],
+  "accessories": ["Accessory 1", "Accessory 2", "Accessory 3", "Accessory 4", "Accessory 5"],
+  "hairstyles": ["Hairstyle 1", "Hairstyle 2"],
+  "explanation": "2-3 sentences explaining why these recommendations work for this person"
+}}
+
+Focus on Indian fashion context. Be specific and practical. Use actual color names and hex codes."""
+
+        try:
+            headers = {
+                "Authorization": f"Bearer {self.api_key}",
+                "Content-Type": "application/json"
+            }
+            
+            payload = {
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": "You are an expert fashion stylist. Always respond with valid JSON only, no additional text."
+                    },
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ],
+                "model": self.model,
+                "stream": False,
+                "temperature": 0.7,
+                "max_tokens": 1500
+            }
+            
+            response = requests.post(
+                f"{self.base_url}/chat/completions",
+                headers=headers,
+                json=payload,
+                timeout=30
+            )
+            
+            if response.status_code == 200:
+                result = response.json()
+                content = result['choices'][0]['message']['content']
+                
+                # Parse JSON from response
+                import json
+                import re
+                
+                # Extract JSON from markdown code blocks if present
+                json_match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', content, re.DOTALL)
+                if json_match:
+                    content = json_match.group(1)
+                
+                # Parse the JSON
+                recommendations = json.loads(content)
+                
+                return {
+                    'success': True,
+                    'recommendations': recommendations
+                }
+            else:
+                return {
+                    'success': False,
+                    'error': f"API Error: {response.status_code}",
+                    'details': response.text
+                }
+                
+        except Exception as e:
+            print(f"Grok recommendation error: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+    
     def generate_style_recommendations(self, skin_tone, undertone, gender, occasion, vibe, budget):
         """
         Generate personalized fashion recommendations using Grok

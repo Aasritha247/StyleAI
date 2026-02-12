@@ -12,10 +12,10 @@ class ShoppingAPI:
             'myntra': 'https://www.myntra.com'
         }
     
-    def search_products(self, query, occasion='casual', budget='medium', limit=4, platform='all', skin_tone='Medium'):
+    def search_products(self, query, occasion='casual', budget='medium', limit=4, platform='all', skin_tone='Medium', gender='female', color_palette=None):
         """
         Search for fashion products with accurate direct links
-        Personalized based on skin tone
+        Personalized based on skin tone, gender, and color palette
         """
         
         # Budget-based price filters
@@ -27,36 +27,132 @@ class ShoppingAPI:
         
         min_price, max_price = price_ranges.get(budget, (2000, 5000))
         
-        # Skin tone specific color modifiers
+        # Gender-specific categories
+        gender_categories = {
+            'female': 'women',
+            'male': 'men',
+            'other': 'unisex'
+        }
+        
+        gender_category = gender_categories.get(gender, 'women')
+        
+        # Extract color names from palette if provided
+        color_keywords = ''
+        if color_palette and len(color_palette) > 0:
+            # Get first 2-3 colors from palette
+            colors = [c.get('name', '') for c in color_palette[:3]]
+            color_keywords = ' '.join(colors).lower()
+        
+        # Skin tone specific color modifiers (as backup)
         color_modifiers = {
-            'Fair': ['pastel', 'light', 'soft', 'baby'],
-            'Medium': ['vibrant', 'bright', 'colorful', 'rich'],
-            'Olive': ['earthy', 'warm', 'olive', 'bronze'],
-            'Deep': ['bold', 'jewel tone', 'bright', 'vivid']
+            'Fair': ['pastel', 'light', 'soft'],
+            'Medium': ['vibrant', 'bright', 'colorful'],
+            'Olive': ['earthy', 'warm', 'olive'],
+            'Deep': ['bold', 'jewel tone', 'bright']
         }
         
-        color_mod = color_modifiers.get(skin_tone, [''])[0]
+        color_mod = color_modifiers.get(skin_tone, [''])[0] if not color_keywords else ''
         
-        # Occasion-specific search queries with skin tone modifiers
+        # Occasion-specific search queries with gender and color
         occasion_queries = {
-            'wedding': [f'{color_mod} wedding lehenga women', f'{color_mod} bridal saree', f'{color_mod} party gown', f'{color_mod} ethnic wear women'],
-            'party': [f'{color_mod} party dress women', f'{color_mod} cocktail dress', f'{color_mod} evening gown', f'{color_mod} party wear women'],
-            'work': [f'formal shirt women', f'blazer women', f'office wear women', f'formal trousers women'],
-            'gym': [f'sports bra', f'gym leggings women', f'workout top women', f'activewear women'],
-            'beach': [f'{color_mod} swimsuit women', f'{color_mod} beach dress', f'bikini', f'{color_mod} resort wear women'],
-            'date': [f'{color_mod} date dress women', f'{color_mod} casual dress women', f'{color_mod} midi dress', f'jumpsuit women'],
-            'festival': [f'{color_mod} festive wear women', f'{color_mod} ethnic kurta women', f'{color_mod} traditional dress', f'{color_mod} indo western women'],
-            'daily': [f'{color_mod} casual top women', f'jeans women', f'{color_mod} kurti', f'{color_mod} casual dress women'],
-            'college': [f'casual wear women', f'denim jacket women', f'crop top', f'sneakers women'],
-            'interview': [f'formal blazer women', f'formal shirt women', f'formal pants women', f'professional wear women'],
-            'brunch': [f'{color_mod} brunch dress women', f'{color_mod} casual top women', f'skirt women', f'{color_mod} summer dress women'],
-            'dinner': [f'{color_mod} dinner dress women', f'{color_mod} elegant top women', f'{color_mod} formal dress women', f'{color_mod} evening wear women'],
-            'travel': [f'travel wear women', f'comfortable dress women', f'casual outfit women', f'travel pants women'],
-            'shopping': [f'shopping outfit women', f'casual wear women', f'comfortable dress women', f'everyday wear women'],
-            'concert': [f'{color_mod} concert outfit women', f'{color_mod} trendy top women', f'{color_mod} stylish dress women', f'{color_mod} party wear women'],
+            'wedding': [
+                f'{color_keywords} wedding {gender_category}',
+                f'{color_keywords} bridal {gender_category}',
+                f'{color_keywords} party gown {gender_category}',
+                f'{color_keywords} ethnic wear {gender_category}'
+            ],
+            'party': [
+                f'{color_keywords} party dress {gender_category}',
+                f'{color_keywords} cocktail {gender_category}',
+                f'{color_keywords} evening wear {gender_category}',
+                f'{color_keywords} party outfit {gender_category}'
+            ],
+            'work': [
+                f'formal shirt {gender_category}',
+                f'blazer {gender_category}',
+                f'office wear {gender_category}',
+                f'formal {gender_category}'
+            ],
+            'gym': [
+                f'sports wear {gender_category}',
+                f'gym outfit {gender_category}',
+                f'activewear {gender_category}',
+                f'workout clothes {gender_category}'
+            ],
+            'beach': [
+                f'{color_keywords} beach wear {gender_category}',
+                f'{color_keywords} swimwear {gender_category}',
+                f'{color_keywords} resort wear {gender_category}',
+                f'beach outfit {gender_category}'
+            ],
+            'date': [
+                f'{color_keywords} date outfit {gender_category}',
+                f'{color_keywords} casual dress {gender_category}',
+                f'{color_keywords} evening wear {gender_category}',
+                f'date night {gender_category}'
+            ],
+            'festival': [
+                f'{color_keywords} festive wear {gender_category}',
+                f'{color_keywords} ethnic {gender_category}',
+                f'{color_keywords} traditional {gender_category}',
+                f'festival outfit {gender_category}'
+            ],
+            'daily': [
+                f'{color_keywords} casual {gender_category}',
+                f'{color_keywords} everyday wear {gender_category}',
+                f'casual outfit {gender_category}',
+                f'{color_keywords} {gender_category} fashion'
+            ],
+            'college': [
+                f'{color_keywords} casual wear {gender_category}',
+                f'college outfit {gender_category}',
+                f'{color_keywords} trendy {gender_category}',
+                f'casual {gender_category}'
+            ],
+            'interview': [
+                f'formal {gender_category}',
+                f'professional wear {gender_category}',
+                f'interview outfit {gender_category}',
+                f'business {gender_category}'
+            ],
+            'brunch': [
+                f'{color_keywords} brunch outfit {gender_category}',
+                f'{color_keywords} casual {gender_category}',
+                f'brunch wear {gender_category}',
+                f'{color_keywords} day wear {gender_category}'
+            ],
+            'dinner': [
+                f'{color_keywords} dinner outfit {gender_category}',
+                f'{color_keywords} elegant {gender_category}',
+                f'dinner wear {gender_category}',
+                f'{color_keywords} evening {gender_category}'
+            ],
+            'travel': [
+                f'travel wear {gender_category}',
+                f'comfortable {gender_category}',
+                f'travel outfit {gender_category}',
+                f'casual {gender_category}'
+            ],
+            'shopping': [
+                f'{color_keywords} casual {gender_category}',
+                f'shopping outfit {gender_category}',
+                f'comfortable {gender_category}',
+                f'{color_keywords} everyday {gender_category}'
+            ],
+            'concert': [
+                f'{color_keywords} concert outfit {gender_category}',
+                f'{color_keywords} trendy {gender_category}',
+                f'concert wear {gender_category}',
+                f'{color_keywords} party {gender_category}'
+            ],
         }
         
-        search_terms = occasion_queries.get(occasion, [f'{color_mod} women fashion', f'{color_mod} casual wear women'])
+        search_terms = occasion_queries.get(occasion, [
+            f'{color_keywords} {gender_category} fashion',
+            f'{color_keywords} casual {gender_category}',
+            f'{color_keywords} outfit {gender_category}',
+            f'{gender_category} wear'
+        ])
         
         # Generate product recommendations
         products = []

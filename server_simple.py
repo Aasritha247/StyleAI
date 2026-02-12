@@ -149,6 +149,117 @@ def get_recommendations():
         skin_tone = data.get('skin_tone', 'Medium')
         undertone = data.get('undertone', 'warm')
         vibe = data.get('vibe', 'casual')
+        gender = data.get('gender', 'female')
+        
+        print(f"Request data: skin_tone={skin_tone}, undertone={undertone}, occasion={occasion}, budget={budget}, gender={gender}")
+    except Exception as e:
+        print(f"Error parsing request: {e}")
+        return jsonify({'error': 'Invalid request data', 'details': str(e)}), 400
+    
+    # Try to get Grok-powered recommendations first
+    if grok_api and ai_provider == 'grok':
+        try:
+            print("Generating recommendations using Grok API...")
+            grok_result = grok_api.generate_complete_recommendations(
+                skin_tone=skin_tone,
+                undertone=undertone,
+                gender=gender,
+                occasion=occasion,
+                vibe=vibe,
+                budget=budget
+            )
+            
+            if grok_result.get('success'):
+                recommendations = grok_result['recommendations']
+                color_palette = recommendations.get('color_palette', [])
+                outfits = recommendations.get('outfits', [])
+                accessories = recommendations.get('accessories', [])
+                hairstyles = recommendations.get('hairstyles', [])
+                explanation = recommendations.get('explanation', '')
+                
+                print("✓ Grok recommendations generated successfully")
+                
+                # Get shopping products with color palette and gender
+                try:
+                    amazon_products = shopping_api.search_products(
+                        query='fashion',
+                        occasion=occasion,
+                        budget=budget,
+                        limit=4,
+                        platform='amazon',
+                        skin_tone=skin_tone,
+                        gender=gender,
+                        color_palette=color_palette
+                    )
+                    
+                    flipkart_products = shopping_api.search_products(
+                        query='fashion',
+                        occasion=occasion,
+                        budget=budget,
+                        limit=4,
+                        platform='flipkart',
+                        skin_tone=skin_tone,
+                        gender=gender,
+                        color_palette=color_palette
+                    )
+                    
+                    myntra_products = shopping_api.search_products(
+                        query='fashion',
+                        occasion=occasion,
+                        budget=budget,
+                        limit=4,
+                        platform='myntra',
+                        skin_tone=skin_tone,
+                        gender=gender,
+                        color_palette=color_palette
+                    )
+                    
+                    print(f"Shopping products fetched successfully")
+                    
+                    return jsonify({
+                        'success': True,
+                        'color_palette': color_palette,
+                        'outfits': outfits,
+                        'accessories': accessories,
+                        'hairstyle': hairstyles,
+                        'shopping': {
+                            'amazon': amazon_products,
+                            'flipkart': flipkart_products,
+                            'myntra': myntra_products
+                        },
+                        'explanation': explanation,
+                        'ai_powered': True,
+                        'source': 'grok'
+                    })
+                    
+                except Exception as e:
+                    print(f"Shopping API error: {e}")
+                    # Return Grok recommendations without shopping
+                    return jsonify({
+                        'success': True,
+                        'color_palette': color_palette,
+                        'outfits': outfits,
+                        'accessories': accessories,
+                        'hairstyle': hairstyles,
+                        'shopping': {'amazon': [], 'flipkart': [], 'myntra': []},
+                        'explanation': explanation,
+                        'ai_powered': True,
+                        'source': 'grok'
+                    })
+            else:
+                print(f"Grok API failed: {grok_result.get('error')}")
+                # Fall through to default recommendations
+                
+        except Exception as e:
+            print(f"Grok API error: {e}")
+            import traceback
+            traceback.print_exc()
+            # Fall through to default recommendations
+    
+    # Fallback: Use built-in recommendations if Grok is not available
+    print("Using built-in recommendations (Grok not available)")
+    
+        vibe = data.get('vibe', 'casual')
         
         print(f"Request data: skin_tone={skin_tone}, undertone={undertone}, occasion={occasion}, budget={budget}")
     except Exception as e:
@@ -411,7 +522,9 @@ def get_recommendations():
             budget=budget,
             limit=4,
             platform='amazon',
-            skin_tone=skin_tone
+            skin_tone=skin_tone,
+            gender=gender,
+            color_palette=color_palette
         )
         
         flipkart_products = shopping_api.search_products(
@@ -420,7 +533,9 @@ def get_recommendations():
             budget=budget,
             limit=4,
             platform='flipkart',
-            skin_tone=skin_tone
+            skin_tone=skin_tone,
+            gender=gender,
+            color_palette=color_palette
         )
         
         myntra_products = shopping_api.search_products(
@@ -429,7 +544,9 @@ def get_recommendations():
             budget=budget,
             limit=4,
             platform='myntra',
-            skin_tone=skin_tone
+            skin_tone=skin_tone,
+            gender=gender,
+            color_palette=color_palette
         )
         
         print(f"Shopping products fetched successfully")
@@ -463,7 +580,8 @@ def get_recommendations():
                 'myntra': myntra_products
             },
             'explanation': explanation,
-            'ai_powered': grok_api is not None and ai_provider == 'grok'
+            'ai_powered': grok_api is not None and ai_provider == 'grok',
+            'source': 'fallback'
         })
     
     except Exception as e:
