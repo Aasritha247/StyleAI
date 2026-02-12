@@ -3,11 +3,26 @@ from flask import Flask, render_template, request, jsonify
 import os
 from datetime import datetime
 from shopping_api import ShoppingAPI
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 print("Starting StyleAI+ Simple Server...")
 
 # Initialize shopping API
 shopping_api = ShoppingAPI()
+
+# Initialize Grok API if available
+try:
+    from grok_api import GrokAPI
+    grok_api = GrokAPI()
+    ai_provider = os.getenv('AI_PROVIDER', 'grok')
+    print(f"AI Provider: {ai_provider}")
+except Exception as e:
+    print(f"Grok API not available: {e}")
+    grok_api = None
+    ai_provider = None
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
@@ -419,6 +434,23 @@ def get_recommendations():
         
         print(f"Shopping products fetched successfully")
         
+        # Generate AI-powered explanation if Grok is available
+        explanation = f'These {", ".join([c["name"] for c in color_palette[:3]])} colors are specially chosen for your {skin_tone.lower()} skin tone with {undertone} undertones. Perfect for {occasion} occasions with a {vibe} vibe!'
+        
+        if grok_api and ai_provider == 'grok':
+            try:
+                ai_explanation = grok_api.get_personalized_explanation(
+                    skin_tone=skin_tone,
+                    undertone=undertone,
+                    colors=color_palette,
+                    occasion=occasion
+                )
+                if ai_explanation:
+                    explanation = ai_explanation
+                    print("Using Grok-generated explanation")
+            except Exception as e:
+                print(f"Grok explanation error: {e}")
+        
         return jsonify({
             'success': True,
             'color_palette': color_palette,
@@ -430,7 +462,8 @@ def get_recommendations():
                 'flipkart': flipkart_products,
                 'myntra': myntra_products
             },
-            'explanation': f'These {", ".join([c["name"] for c in color_palette[:3]])} colors are specially chosen for your {skin_tone.lower()} skin tone with {undertone} undertones. Perfect for {occasion} occasions with a {vibe} vibe!'
+            'explanation': explanation,
+            'ai_powered': grok_api is not None and ai_provider == 'grok'
         })
     
     except Exception as e:

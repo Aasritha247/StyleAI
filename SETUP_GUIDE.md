@@ -19,12 +19,22 @@ pip install -r requirements.txt
 ```
 
 ### 3. Set Up Environment Variables
-Create a `.env` file in the root directory (optional):
-```
-GEMINI_API_KEY=your_api_key_here
+
+**Option 1: Using .env file (Recommended)**
+```bash
+# Copy the example file
+copy .env.example .env
+
+# Edit .env file and add your actual Gemini API key
+# Get your API key from: https://makersuite.google.com/app/apikey
 ```
 
-Or set it directly in your terminal:
+Open `.env` file and replace `your_gemini_api_key_here` with your actual API key:
+```
+GEMINI_API_KEY=AIzaSyC...your_actual_key_here
+```
+
+**Option 2: Set environment variable directly in terminal**
 
 **Windows (CMD):**
 ```cmd
